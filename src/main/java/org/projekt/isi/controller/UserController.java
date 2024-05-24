@@ -4,6 +4,9 @@ import org.projekt.isi.component.LoginRequest;
 import org.projekt.isi.dto.UserDTO;
 import org.projekt.isi.entity.User;
 import org.projekt.isi.repository.UserRepository;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.HttpStatus;
+import org.springframework.http.ResponseEntity;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContextHolder;
@@ -11,10 +14,6 @@ import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.core.userdetails.UserDetailsService;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.web.bind.annotation.*;
-
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.http.ResponseEntity;
-import org.springframework.http.HttpStatus;
 
 import javax.servlet.http.HttpServletRequest;
 import java.util.Optional;
@@ -61,10 +60,7 @@ public class UserController {
         Authentication authentication = new UsernamePasswordAuthenticationToken(userDetails, null, userDetails.getAuthorities());
         SecurityContextHolder.getContext().setAuthentication(authentication);
 
-        // Pobierz userId
         Long userId = userRepository.findByUsername(userDetails.getUsername()).getId();
-
-        // Zapisz userId do sesji użytkownika
         request.getSession().setAttribute("userId", userId);
 
         return ResponseEntity.ok("Zalogowano pomyślnie!");
@@ -75,12 +71,47 @@ public class UserController {
         request.getSession().invalidate();
         return ResponseEntity.ok("Wylogowano pomyślnie!");
     }
-    @GetMapping("/user/{username}/id")
+
+    @GetMapping("/{username}/id")
     public ResponseEntity<Long> getUserIdByUsername(@PathVariable String username) {
-        Optional<User> userOptional = Optional.ofNullable(userRepository.findByUsername(username));
-        if (userOptional.isPresent()) {
-            Long userId = userOptional.get().getId();
-            return ResponseEntity.ok(userId);
+        User user = userRepository.findByUsername(username);
+        if (user != null) {
+            return ResponseEntity.ok(user.getId());
+        } else {
+            return ResponseEntity.notFound().build();
+        }
+    }
+
+    @DeleteMapping("/{username}/delete")
+    public ResponseEntity<?> deleteUser(@PathVariable String username) {
+        User user = userRepository.findByUsername(username);
+        if (user != null) {
+            userRepository.delete(user);
+            return ResponseEntity.ok("Użytkownik został usunięty pomyślnie!");
+        } else {
+            return ResponseEntity.notFound().build();
+        }
+    }
+
+    @PutMapping("/{username}/emailUpdate")
+    public ResponseEntity<?> updateUserEmail(@PathVariable String username, @RequestBody String newEmail) {
+        User user = userRepository.findByUsername(username);
+        if (user != null) {
+            user.setEmail(newEmail);
+            userRepository.save(user);
+            return ResponseEntity.ok("Adres e-mail użytkownika został zaktualizowany pomyślnie!");
+        } else {
+            return ResponseEntity.notFound().build();
+        }
+    }
+
+    @PutMapping("/{username}/passwordUpdate")
+    public ResponseEntity<?> updateUserPassword(@PathVariable String username, @RequestBody String newPassword) {
+        User user = userRepository.findByUsername(username);
+        if (user != null) {
+            user.setPassword(passwordEncoder.encode(newPassword));
+            userRepository.save(user);
+            return ResponseEntity.ok("Hasło użytkownika zostało zaktualizowane pomyślnie!");
         } else {
             return ResponseEntity.notFound().build();
         }
