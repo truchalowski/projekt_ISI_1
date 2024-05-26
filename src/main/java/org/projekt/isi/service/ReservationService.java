@@ -30,22 +30,32 @@ public class ReservationService {
         ReservationDTO dto = new ReservationDTO();
         dto.setDateTime(reservation.getDateTime());
         dto.setUserId(reservation.getUser().getId());
-        dto.setService(reservation.getService()); // Ustawienie pola service w DTO
+        dto.setService(reservation.getService());
         return dto;
     }
 
     public Reservation createReservation(ReservationDTO reservationDTO) {
         Reservation reservation = new Reservation();
         reservation.setDateTime(reservationDTO.getDateTime());
-        reservation.setService(reservationDTO.getService()); // Ustawienie pola service
+        reservation.setService(reservationDTO.getService());
 
-        // Szukamy użytkownika o identyfikatorze podanym w DTO
         User user = userRepository.findById(reservationDTO.getUserId()).orElse(null);
-
-        // Przypisujemy użytkownika do rezerwacji
         reservation.setUser(user);
 
-        // Zapisujemy rezerwację
         return reservationRepository.save(reservation);
+    }
+
+    public Reservation updateReservation(Long reservationId, ReservationDTO reservationDTO) {
+        Reservation reservation = reservationRepository.findById(reservationId).orElse(null);
+        if (reservation != null) {
+            reservation.setDateTime(reservationDTO.getDateTime());
+            reservation.setService(reservationDTO.getService());
+            return reservationRepository.save(reservation);
+        }
+        return null;
+    }
+
+    public void cancelReservation(Long reservationId) {
+        reservationRepository.deleteById(reservationId);
     }
 }
