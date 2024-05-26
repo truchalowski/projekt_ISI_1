@@ -30,21 +30,18 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter {
                 .and()
                 .withUser("employee")
                 .password(passwordEncoder().encode("password"))
-                .roles("EMPLOYEE")
-                .and()
-                .withUser("admin")
-                .password(passwordEncoder().encode("password"))
-                .roles("ADMIN");
+                .roles("EMPLOYEE");
     }
 
     @Override
     protected void configure(HttpSecurity http) throws Exception {
         http
-                .csrf().disable() // Wyłączamy zabezpieczenie CSRF dla uproszczenia
+                .csrf().disable()
                 .authorizeRequests()
-                .antMatchers("/api/public/**").permitAll() // Dostęp publiczny
-                .antMatchers("/api/users/register").permitAll() // Pozwól na dostęp do rejestracji użytkownika
-                .antMatchers("/api/private/**").authenticated() // Dostęp wymaga uwierzytelnienia
+                .antMatchers("/api/public/**").permitAll()
+                .antMatchers("/api/users/register").permitAll()
+                .antMatchers("/api/private/**").authenticated()
+                .antMatchers("/api/private/employee/**").hasRole("EMPLOYEE") // Dostęp dla pracownika
                 .and()
                 .formLogin()
                 .loginProcessingUrl("/api/login")
