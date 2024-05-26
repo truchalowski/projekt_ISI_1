@@ -8,6 +8,7 @@ import org.projekt.isi.repository.UserRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
+import javax.transaction.Transactional;
 import java.util.List;
 import java.util.stream.Collectors;
 
@@ -38,6 +39,7 @@ public class ReservationService {
         Reservation reservation = new Reservation();
         reservation.setDateTime(reservationDTO.getDateTime());
         reservation.setService(reservationDTO.getService());
+        reservation.setStatus("PENDING");
 
         User user = userRepository.findById(reservationDTO.getUserId()).orElse(null);
         reservation.setUser(user);
@@ -55,7 +57,25 @@ public class ReservationService {
         return null;
     }
 
+    @Transactional
     public void cancelReservation(Long reservationId) {
-        reservationRepository.deleteById(reservationId);
+        Reservation reservation = reservationRepository.findById(reservationId)
+                .orElseThrow(() -> new RuntimeException("Reservation not found with id: " + reservationId));
+
+        // Zmiana statusu rezerwacji na "CANCELLED"
+        reservation.setStatus("CANCELLED");
+
+        // Zapisanie zmienionej rezerwacji w bazie danych
+        reservationRepository.save(reservation);
     }
+
+    public Reservation confirmReservation(Long reservationId) {
+        Reservation reservation = reservationRepository.findById(reservationId)
+                .orElseThrow(() -> new RuntimeException("Reservation not found"));
+
+        reservation.setStatus("CONFIRMED"); // Zakładając, że masz enum ReservationStatus
+
+        return reservationRepository.save(reservation);
+    }
+
 }

@@ -5,6 +5,7 @@ import org.projekt.isi.entity.Reservation;
 import org.projekt.isi.service.ReservationService;
 import org.springframework.beans.factory.annotation.Autowired;
 
+import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
@@ -33,8 +34,15 @@ public class ReservationController {
     }
 
     @DeleteMapping("/cancel/{reservationId}")
-    public ResponseEntity<?> cancelReservation(@PathVariable Long reservationId) {
+    public ResponseEntity<String> cancelReservation(@PathVariable Long reservationId) {
         reservationService.cancelReservation(reservationId);
-        return ResponseEntity.ok("Reservation cancelled successfully.");
+        return ResponseEntity.status(HttpStatus.OK).body("Reservation cancelled successfully");
     }
+
+    @PutMapping("/confirm/{reservationId}")
+    public ResponseEntity<?> confirmReservation(@PathVariable Long reservationId) {
+        Reservation reservation = reservationService.confirmReservation(reservationId);
+        return ResponseEntity.ok(reservation);
+    }
+
 }

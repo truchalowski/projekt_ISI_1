@@ -20,6 +20,9 @@ public class Reservation {
     @Column(nullable = true)
     private String service; // Dodane pole service
 
+    @Column(nullable = false)
+    private String status;
+
     // Standardowe gettery i settery
     public Long getId() {
         return id;
@@ -51,5 +54,13 @@ public class Reservation {
 
     public void setService(String service) {
         this.service = service;
+    }
+
+    public String getStatus() {
+        return status;
+    }
+
+    public void setStatus(String status) {
+        this.status = status;
     }
 }
