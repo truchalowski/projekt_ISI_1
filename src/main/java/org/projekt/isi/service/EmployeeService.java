@@ -96,9 +96,11 @@ public class EmployeeService {
 
     public EmployeeDTO convertToDTO(Employee employee) {
         EmployeeDTO dto = new EmployeeDTO();
+        dto.setId(employee.getId()); // Dodaj ID pracownika do DTO
         dto.setFirstName(employee.getFirstName());
         dto.setLastName(employee.getLastName());
         dto.setEmail(employee.getUser().getEmail()); // Pobranie emaila związanego użytkownika
         return dto;
     }
+
 }
