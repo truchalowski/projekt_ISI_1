@@ -21,6 +21,10 @@ public class Reservation {
     @JoinColumn(name = "service_id", nullable = false)
     private Services service;
 
+    @ManyToOne
+    @JoinColumn(name = "employee_id", nullable = false)
+    private Employee employee;
+
     @Column(nullable = false)
     private String status;
 
@@ -55,6 +59,14 @@ public class Reservation {
 
     public void setService(Services service) {
         this.service = service;
+    }
+
+    public Employee getEmployee() {
+        return employee;
+    }
+
+    public void setEmployee(Employee employee) {
+        this.employee = employee;
     }
 
     public String getStatus() {
