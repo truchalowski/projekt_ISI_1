@@ -137,26 +137,29 @@ public class ReservationService {
         return reservationRepository.save(reservation);
     }
 
-    public List<LocalTime> getAvailableHours(LocalDate date) {
+    public List<LocalTime> getAvailableHours(Long employeeId, LocalDate date) {
         LocalDateTime startOfDay = date.atStartOfDay();
         LocalDateTime endOfDay = date.atTime(LocalTime.MAX);
 
-        List<Reservation> reservations = reservationRepository.findByReservationDateBetween(startOfDay, endOfDay);
+        // Pobranie rezerwacji dla danego pracownika i daty
+        List<Reservation> reservations = reservationRepository.findByEmployeeIdAndReservationDateBetween(employeeId, startOfDay, endOfDay);
         List<LocalTime> bookedTimes = new ArrayList<>();
 
         for (Reservation reservation : reservations) {
             LocalTime startTime = reservation.getReservationDate().toLocalTime();
             Services service = reservation.getService();
-            int durationMinutes = service.getDuration().toLocalTime().getHour() * 60 + service.getDuration().toLocalTime().getMinute();
-            LocalTime endTime = startTime.plusMinutes(durationMinutes);
+            if (service != null) {
+                int durationMinutes = service.getDuration().toLocalTime().getHour() * 60 + service.getDuration().toLocalTime().getMinute();
+                LocalTime endTime = startTime.plusMinutes(durationMinutes);
 
-            while (startTime.isBefore(endTime)) {
-                bookedTimes.add(startTime);
-                startTime = startTime.plusMinutes(30); // Assuming slots are of 30 minutes duration
+                while (startTime.isBefore(endTime)) {
+                    bookedTimes.add(startTime);
+                    startTime = startTime.plusMinutes(30); // Zakładając, że sloty trwają 30 minut
+                }
             }
         }
 
-        List<LocalTime> allTimes = IntStream.range(9, 18) // Working hours from 9 AM to 5 PM
+        List<LocalTime> allTimes = IntStream.range(9, 18) // Godziny pracy od 9:00 do 17:30
                 .mapToObj(hour -> LocalTime.of(hour, 0))
                 .flatMap(hour -> Stream.of(hour, hour.plusMinutes(30)))
                 .collect(Collectors.toList());
@@ -165,5 +168,6 @@ public class ReservationService {
                 .filter(time -> !bookedTimes.contains(time))
                 .collect(Collectors.toList());
     }
+
 }
 
