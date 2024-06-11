@@ -52,9 +52,8 @@ public class ReservationController {
 
     // New endpoint for available hours
     @GetMapping("/available")
-    public List<LocalTime> getAvailableHours(@RequestParam("date") String date) {
+    public List<LocalTime> getAvailableHours(@RequestParam("date") String date, @RequestParam("employeeId") Long employeeId) {
         LocalDate reservationDate = LocalDate.parse(date);
-        return reservationService.getAvailableHours(reservationDate);
+        return reservationService.getAvailableHours(employeeId, reservationDate);
     }
-
 }
