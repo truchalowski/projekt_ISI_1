@@ -5,7 +5,8 @@ import java.time.LocalDateTime;
 public class ReservationDTO {
     private LocalDateTime reservationDate;
     private Long userId;
-    private Long serviceId; // Zmiana na identyfikator usługi
+    private Long serviceId;
+    private Long employeeId; // Nowe pole employeeId
 
     public LocalDateTime getReservationDate() {
         return reservationDate;
@@ -13,10 +14,6 @@ public class ReservationDTO {
 
     public void setReservationDate(LocalDateTime reservationDate) {
         this.reservationDate = reservationDate;
-    }
-
-    public LocalDateTime getReservationDate(LocalDateTime reservationDate) {
-        return reservationDate;
     }
 
     public Long getUserId() {
@@ -35,5 +32,11 @@ public class ReservationDTO {
         this.serviceId = serviceId;
     }
 
+    public Long getEmployeeId() {
+        return employeeId;
+    }
 
+    public void setEmployeeId(Long employeeId) {
+        this.employeeId = employeeId;
+    }
 }
