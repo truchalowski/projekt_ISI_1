@@ -3,17 +3,20 @@ package org.projekt.isi.dto;
 import java.time.LocalDateTime;
 
 public class ReservationDTO {
-    private LocalDateTime dateTime;
+    private LocalDateTime reservationDate;
     private Long userId;
-    private String service; // Dodane pole service
+    private Long serviceId; // Zmiana na identyfikator usługi
 
-    // Gettery i settery
-    public LocalDateTime getDateTime() {
-        return dateTime;
+    public LocalDateTime getReservationDate() {
+        return reservationDate;
     }
 
-    public void setDateTime(LocalDateTime dateTime) {
-        this.dateTime = dateTime;
+    public void setReservationDate(LocalDateTime reservationDate) {
+        this.reservationDate = reservationDate;
+    }
+
+    public LocalDateTime getReservationDate(LocalDateTime reservationDate) {
+        return reservationDate;
     }
 
     public Long getUserId() {
@@ -24,11 +27,13 @@ public class ReservationDTO {
         this.userId = userId;
     }
 
-    public String getService() {
-        return service;
+    public Long getServiceId() {
+        return serviceId;
     }
 
-    public void setService(String service) {
-        this.service = service;
+    public void setServiceId(Long serviceId) {
+        this.serviceId = serviceId;
     }
+
+
 }

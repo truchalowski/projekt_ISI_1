@@ -9,6 +9,11 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
+import java.time.LocalDate;
+import java.time.LocalDateTime;
+import java.time.LocalTime;
+import java.util.List;
+
 @RestController
 @RequestMapping("/api/reservations")
 public class ReservationController {
@@ -43,6 +48,13 @@ public class ReservationController {
     public ResponseEntity<?> confirmReservation(@PathVariable Long reservationId) {
         Reservation reservation = reservationService.confirmReservation(reservationId);
         return ResponseEntity.ok(reservation);
+    }
+
+    // New endpoint for available hours
+    @GetMapping("/available")
+    public List<LocalTime> getAvailableHours(@RequestParam("date") String date) {
+        LocalDate reservationDate = LocalDate.parse(date);
+        return reservationService.getAvailableHours(reservationDate);
     }
 
 }

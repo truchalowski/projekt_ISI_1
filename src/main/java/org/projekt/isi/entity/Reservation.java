@@ -17,8 +17,9 @@ public class Reservation {
     @JoinColumn(name = "user_id", nullable = false)
     private User user;
 
-    @Column(nullable = true)
-    private String service; // Dodane pole service
+    @ManyToOne
+    @JoinColumn(name = "service_id", nullable = false)
+    private Services service;
 
     @Column(nullable = false)
     private String status;
@@ -32,11 +33,11 @@ public class Reservation {
         this.id = id;
     }
 
-    public LocalDateTime getDateTime() {
+    public LocalDateTime getReservationDate() {
         return reservationDate;
     }
 
-    public void setDateTime(LocalDateTime reservationDate) {
+    public void setReservationDate(LocalDateTime reservationDate) {
         this.reservationDate = reservationDate;
     }
 
@@ -48,11 +49,11 @@ public class Reservation {
         this.user = user;
     }
 
-    public String getService() {
+    public Services getService() {
         return service;
     }
 
-    public void setService(String service) {
+    public void setService(Services service) {
         this.service = service;
     }
 
