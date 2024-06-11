@@ -3,7 +3,7 @@
 -- https://www.phpmyadmin.net/
 --
 -- Host: 127.0.0.1
--- Generation Time: Cze 08, 2024 at 02:53 PM
+-- Generation Time: Cze 11, 2024 at 09:10 PM
 -- Wersja serwera: 10.4.32-MariaDB
 -- Wersja PHP: 8.2.12
 
@@ -56,17 +56,15 @@ CREATE TABLE `reservations` (
   `created_at` datetime DEFAULT current_timestamp(),
   `status` enum('PENDING','CONFIRMED','CANCELLED') NOT NULL DEFAULT 'PENDING',
   `service_id` int(11) DEFAULT NULL,
-  `duration` time DEFAULT NULL
+  `employee_id` int(11) NOT NULL
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
 
 --
 -- Dumping data for table `reservations`
 --
 
-INSERT INTO `reservations` (`id`, `user_id`, `reservation_date`, `end_time`, `created_at`, `status`, `service_id`, `duration`) VALUES
-(1, 2, '2024-05-29 18:17:16', '2024-05-26 21:04:54', '2024-05-26 18:18:02', 'PENDING', NULL, NULL),
-(3, 2, '2024-06-02 16:00:00', '2024-05-26 21:04:54', '2024-05-26 18:43:12', 'CONFIRMED', NULL, NULL),
-(4, 2, '2024-06-01 18:00:00', '2024-05-26 21:04:54', '2024-05-26 19:31:34', 'CANCELLED', NULL, NULL);
+INSERT INTO `reservations` (`id`, `user_id`, `reservation_date`, `end_time`, `created_at`, `status`, `service_id`, `employee_id`) VALUES
+(1, 2, '2024-06-30 10:00:00', '2024-06-11 19:33:08', '2024-06-11 19:33:08', 'PENDING', 1, 1);
 
 -- --------------------------------------------------------
 
@@ -87,7 +85,8 @@ CREATE TABLE `services` (
 
 INSERT INTO `services` (`id`, `name`, `duration`, `price_range`) VALUES
 (1, 'strzyżenie męskie', '00:30:00', '40-60'),
-(2, 'strzyżenie damskie', '00:40:00', '50-90');
+(2, 'strzyżenie damskie', '00:40:00', '50-90'),
+(3, 'Farba', '02:00:00', '150-200');
 
 -- --------------------------------------------------------
 
@@ -129,7 +128,8 @@ ALTER TABLE `employees`
 ALTER TABLE `reservations`
   ADD PRIMARY KEY (`id`),
   ADD KEY `user_id_reservations_fk` (`user_id`),
-  ADD KEY `fk_service_reservation` (`service_id`);
+  ADD KEY `fk_service_reservation` (`service_id`),
+  ADD KEY `fk_employee_reservation` (`employee_id`);
 
 --
 -- Indeksy dla tabeli `services`
@@ -157,13 +157,13 @@ ALTER TABLE `employees`
 -- AUTO_INCREMENT for table `reservations`
 --
 ALTER TABLE `reservations`
-  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=5;
+  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=9;
 
 --
 -- AUTO_INCREMENT for table `services`
 --
 ALTER TABLE `services`
-  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=3;
+  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=8;
 
 --
 -- AUTO_INCREMENT for table `users`
@@ -185,6 +185,7 @@ ALTER TABLE `employees`
 -- Constraints for table `reservations`
 --
 ALTER TABLE `reservations`
+  ADD CONSTRAINT `fk_employee_reservation` FOREIGN KEY (`employee_id`) REFERENCES `employees` (`id`) ON DELETE CASCADE,
   ADD CONSTRAINT `fk_service_reservation` FOREIGN KEY (`service_id`) REFERENCES `services` (`id`) ON DELETE CASCADE,
   ADD CONSTRAINT `user_id_reservations_fk` FOREIGN KEY (`user_id`) REFERENCES `users` (`id`);
 COMMIT;
